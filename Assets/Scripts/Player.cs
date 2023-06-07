@@ -3,20 +3,14 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float rotateSpeed = 25f;
 
     private Vector2 inputVector;
-    private float speed = 0;
-
-    private void Start()
-    {
-        speed = moveSpeed;
-    }
 
     private void Update()
     {
         inputVector = new Vector2(0, 0);
-        speed = moveSpeed;
 
         if (Input.GetKey(KeyCode.W))
         {
@@ -38,7 +32,10 @@ public class Player : MonoBehaviour
         inputVector = inputVector.normalized;
         Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
 
-        transform.position +=  moveDir * Time.deltaTime * speed;
+        transform.position +=  moveDir * moveSpeed * Time.deltaTime;
+
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
+
         Debug.Log(inputVector);
     }
 }
