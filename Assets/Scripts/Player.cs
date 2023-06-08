@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     private bool isWalking;
     private void Update()
     {
-        Walk(gameInput.GetMovementVectorNormalized());
+        Walk(gameInput.GetMovementVector());
     }
     private void Walk(Vector2 inputVector)
     {
