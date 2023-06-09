@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -5,17 +6,43 @@ public class Player : MonoBehaviour
     [SerializeField] private GameInput gameInput;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 25f;
+    [SerializeField] private LayerMask counterLayerMask;
 
     private float playerRadius = 0.7f;
     private float playerHeight = 2f;
     private bool isWalking;
+    private Vector3 lastInteractDir;
 
     private void Update()
     {
-        Walk(gameInput.GetMovementVector());
+        HandleMovement();
+        HandleInteractions();
     }
-    private void Walk(Vector2 inputVector)
+
+    private void HandleInteractions()
     {
+        Vector2 inputVector = gameInput.GetMovementVector();
+        Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
+        if(moveDir != Vector3.zero)
+        {
+            lastInteractDir = moveDir;
+        }
+
+        float interactDistance = 2f;
+
+        bool canInteract = Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, counterLayerMask);
+        if (canInteract)
+        {
+            if(raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            {
+                clearCounter.Interact();
+            }
+        }
+    }
+
+    private void HandleMovement()
+    {
+        Vector2 inputVector = gameInput.GetMovementVector();
         isWalking = inputVector != Vector2.zero;
 
         if (isWalking)
