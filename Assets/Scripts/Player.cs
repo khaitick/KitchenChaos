@@ -12,18 +12,20 @@ public class Player : MonoBehaviour
     private float playerHeight = 2f;
     private bool isWalking;
     private Vector3 lastInteractDir;
-
-    private void Update()
+    private void OnEnable()
     {
-        HandleMovement();
-        HandleInteractions();
+        gameInput.OnInteractAction += GameInput_OnInteractAction;
     }
 
-    private void HandleInteractions()
+    private void OnDisable()
+    {
+        gameInput.OnInteractAction -= GameInput_OnInteractAction;
+    }
+    private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
         Vector2 inputVector = gameInput.GetMovementVector();
         Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
-        if(moveDir != Vector3.zero)
+        if (moveDir != Vector3.zero)
         {
             lastInteractDir = moveDir;
         }
@@ -33,11 +35,17 @@ public class Player : MonoBehaviour
         bool canInteract = Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, counterLayerMask);
         if (canInteract)
         {
-            if(raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
             {
                 clearCounter.Interact();
             }
         }
+    }
+
+
+    private void Update()
+    {
+        HandleMovement();
     }
 
     private void HandleMovement()
