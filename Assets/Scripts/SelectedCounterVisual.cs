@@ -32,6 +32,6 @@ public class SelectedCounterVisual : MonoBehaviour
     }
     private void Hide()
     {
-        visualGameObject.SetActive(false  );
+        visualGameObject.SetActive(false);
     }
 }
